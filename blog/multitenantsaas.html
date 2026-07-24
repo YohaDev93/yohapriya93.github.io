@@ -1,0 +1,89 @@
+
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practical Lessons from Multi-Tenant SaaS Development | Yohapriya Vairaperumal</title>
+<meta name="description" content="Practical lessons from enterprise multi-tenant SaaS development, covering tenant isolation, configuration, authorization, observability and maintainability.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css">
+<style>
+.article-hero{padding:100px 0 55px;border-bottom:1px solid var(--line)}
+.article-container{width:min(820px,calc(100% - 40px));margin:0 auto}
+.article-hero h1{font-size:clamp(2.7rem,6vw,4.8rem)}
+.article-subtitle,.article-meta{color:var(--muted)}
+.article-subtitle{font-size:1.15rem}.article-meta{margin-top:26px;font-size:.9rem}
+.article{padding:65px 0 100px}.article p,.article li{color:#c1cce0;font-size:1.05rem}
+.article p{margin:0 0 22px}.article h2{font-size:1.8rem;margin-top:55px;margin-bottom:18px}
+.article ul{padding-left:24px}.lead{font-size:1.2rem!important;color:var(--text)!important}
+.quote{margin:38px 0;padding:24px 28px;border-left:3px solid var(--accent-2);background:rgba(255,255,255,.025);border-radius:0 14px 14px 0;font-size:1.15rem;font-weight:600}
+.lesson,.author-card{margin:35px 0;padding:24px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.025)}
+.lesson strong{color:var(--accent-2)}.back-link{display:inline-block;margin-bottom:28px;color:var(--accent);font-weight:700}
+code{background:rgba(255,255,255,.06);padding:2px 6px;border-radius:6px}
+</style>
+</head><body>
+<header class="site-header"><div class="container nav-wrap">
+<a class="brand" href="../index.html">YV</a>
+<nav class="nav" id="nav">
+<a href="../index.html#about">About</a><a href="../index.html#skills">Skills</a><a href="../index.html#experience">Experience</a><a href="../index.html#projects">Projects</a><a href="../index.html#blog">Blog</a><a href="../index.html#contact">Contact</a>
+</nav><button class="menu-btn" id="menuBtn" aria-label="Open navigation">☰</button>
+</div></header>
+
+<main>
+<section class="article-hero"><div class="article-container">
+<a class="back-link" href="../index.html#blog">← Back to Blog</a>
+<p class="section-label">SAAS / ENTERPRISE ARCHITECTURE</p>
+<h1>Practical Lessons from Multi-Tenant SaaS Development</h1>
+<p class="article-subtitle">What enterprise SaaS development taught me about tenant awareness, isolation, configuration, security and maintaining shared platforms.</p>
+<div class="article-meta">By Yohapriya Vairaperumal • Technical Lead • 8 min read</div>
+</div></section>
+
+<article class="article"><div class="article-container">
+<p class="lead">Multi-tenant SaaS development changes the way you think about even simple application features because every request operates within a tenant boundary.</p>
+<p>During my time at Aspire Systems, I worked with KPMG's Cello SaaS platform in an enterprise multi-tenant environment. That experience gave me practical exposure to building functionality within a shared SaaS architecture where tenant awareness is a fundamental part of application design.</p>
+<div class="quote">In a multi-tenant system, tenant isolation is not just a filtering requirement. It is a security and architecture boundary.</div>
+
+<h2>1. Tenant context must be explicit</h2>
+<p>Every request needs a reliable way to determine which tenant it belongs to. Tenant identity should come from trusted context rather than being blindly accepted from a client-controlled field.</p>
+
+<h2>2. Data isolation must be difficult to bypass accidentally</h2>
+<p>One of the biggest risks in shared SaaS platforms is returning one customer's data to another customer.</p>
+<ul><li>Centralize tenant resolution.</li><li>Enforce tenant-aware data access patterns.</li><li>Use authorization checks consistently.</li><li>Test cross-tenant access explicitly.</li></ul>
+<div class="lesson"><strong>Architecture lesson:</strong> important security boundaries should be enforced by platform conventions, not by developer memory alone.</div>
+
+<h2>3. Shared platform does not mean identical behavior</h2>
+<p>Enterprise SaaS applications frequently require tenant-specific configuration. Different customers may have different workflows, enabled capabilities, terminology, limits or integration settings.</p>
+
+<h2>4. Configuration should be preferred over customization</h2>
+<ul><li>Feature flags</li><li>Tenant settings</li><li>Configurable workflows</li><li>Permission-based capabilities</li><li>Metadata-driven behavior where appropriate</li></ul>
+<p>Too much customization makes upgrades risky because every change must account for many customer-specific variations.</p>
+
+<h2>5. Authorization becomes more than role checking</h2>
+<p>A user may have a valid role but still be restricted to a particular tenant, business unit or capability. This is why claims and policy-based authorization can be more flexible than relying only on broad roles.</p>
+
+<h2>6. Database strategy is a trade-off</h2>
+<p>Multi-tenant systems can use different data-isolation strategies, including shared databases, separate schemas or separate databases. The choice depends on security, scale, operational complexity, cost, compliance and customer expectations.</p>
+<div class="quote">The best tenancy model is the one that satisfies isolation and operational requirements without creating unnecessary platform complexity.</div>
+
+<h2>7. Performance must be considered across tenants</h2>
+<p>One tenant with unusually heavy activity can affect shared resources. Capacity planning, query performance, throttling and monitoring therefore matter greatly in shared environments.</p>
+
+<h2>8. Observability should include tenant context</h2>
+<p>Logs and traces should contain safe tenant identifiers or contextual metadata that allow support teams to understand which customer workflow was affected without exposing sensitive information.</p>
+
+<h2>9. Deployment discipline matters more in SaaS</h2>
+<ul><li>Automated regression testing</li><li>Backward compatibility</li><li>Feature toggles</li><li>Safe database migrations</li><li>Monitoring after deployment</li><li>Rollback or mitigation strategies</li></ul>
+
+<h2>10. SaaS requires product thinking</h2>
+<p>A SaaS platform must ask a broader question than a one-off custom application:</p>
+<div class="quote">How do we solve this requirement in a way that remains reusable, configurable and maintainable for the wider product?</div>
+
+<h2>Final thoughts</h2>
+<p>Multi-tenant SaaS development is not simply normal application development with an additional TenantId column. It affects security, data access, configuration, performance, observability, testing and deployment strategy.</p>
+<div class="lesson"><strong>My takeaway:</strong> shared architecture succeeds when tenant isolation is strict, tenant variation is configurable and engineering teams can evolve the platform without multiplying complexity.</div>
+
+<div class="author-card"><h3>About the author</h3><p><strong>Yohapriya Vairaperumal</strong> is a Technical Lead with 13+ years of enterprise software experience, including multi-tenant SaaS development at Aspire Systems using KPMG's Cello SaaS platform.</p></div>
+</div></article></main>
+
+<footer class="footer"><div class="container footer-wrap"><span>© <span id="year"></span> Yohapriya Vairaperumal</span><a href="../index.html">Portfolio</a></div></footer>
+<script src="../script.js"></script></body></html>

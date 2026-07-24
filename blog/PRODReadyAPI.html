@@ -1,0 +1,93 @@
+
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Designing Production-Ready ASP.NET Core APIs | Yohapriya Vairaperumal</title>
+<meta name="description" content="A practical Technical Lead perspective on building reliable, secure, observable and maintainable ASP.NET Core APIs for production environments.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css">
+<style>
+.article-hero{padding:100px 0 55px;border-bottom:1px solid var(--line)}
+.article-container{width:min(820px,calc(100% - 40px));margin:0 auto}
+.article-hero h1{font-size:clamp(2.7rem,6vw,4.8rem)}
+.article-subtitle,.article-meta{color:var(--muted)}
+.article-subtitle{font-size:1.15rem}.article-meta{margin-top:26px;font-size:.9rem}
+.article{padding:65px 0 100px}.article p,.article li{color:#c1cce0;font-size:1.05rem}
+.article p{margin:0 0 22px}.article h2{font-size:1.8rem;margin-top:55px;margin-bottom:18px}
+.article ul{padding-left:24px}.lead{font-size:1.2rem!important;color:var(--text)!important}
+.quote{margin:38px 0;padding:24px 28px;border-left:3px solid var(--accent-2);background:rgba(255,255,255,.025);border-radius:0 14px 14px 0;font-size:1.15rem;font-weight:600}
+.lesson,.author-card{margin:35px 0;padding:24px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.025)}
+.lesson strong{color:var(--accent-2)}.back-link{display:inline-block;margin-bottom:28px;color:var(--accent);font-weight:700}
+code{background:rgba(255,255,255,.06);padding:2px 6px;border-radius:6px}
+</style>
+</head><body>
+<header class="site-header"><div class="container nav-wrap">
+<a class="brand" href="../index.html">YV</a>
+<nav class="nav" id="nav">
+<a href="../index.html#about">About</a><a href="../index.html#skills">Skills</a><a href="../index.html#experience">Experience</a><a href="../index.html#projects">Projects</a><a href="../index.html#blog">Blog</a><a href="../index.html#contact">Contact</a>
+</nav><button class="menu-btn" id="menuBtn" aria-label="Open navigation">☰</button>
+</div></header>
+
+<main>
+<section class="article-hero"><div class="article-container">
+<a class="back-link" href="../index.html#blog">← Back to Blog</a>
+<p class="section-label">.NET / API ENGINEERING</p>
+<h1>Designing Production-Ready ASP.NET Core APIs</h1>
+<p class="article-subtitle">A practical checklist for building APIs that are not only functionally correct, but also secure, observable, maintainable and ready for real production workloads.</p>
+<div class="article-meta">By Yohapriya Vairaperumal • Technical Lead • 9 min read</div>
+</div></section>
+
+<article class="article"><div class="article-container">
+<p class="lead">Building an API that works is relatively straightforward. Building one that remains reliable under real production traffic, changing requirements and operational pressure requires a different level of engineering discipline.</p>
+<p>Across enterprise applications in financial services, payments, renewable energy, healthcare and aviation, I have learned that production readiness must be designed into an API from the beginning.</p>
+<div class="quote">A production-ready API is not just an endpoint that returns the right JSON. It is a contract that must remain secure, observable, maintainable and reliable over time.</div>
+
+<h2>1. Start with the API contract</h2>
+<p>Before implementation, define what the resource represents, which operations are allowed, how errors are returned and what consumers can rely on.</p>
+<ul><li>Use resource-oriented URLs.</li><li>Use HTTP methods consistently.</li><li>Return meaningful status codes.</li><li>Avoid exposing database entities directly.</li><li>Plan versioning and backward compatibility.</li></ul>
+
+<h2>2. Keep controllers thin</h2>
+<p>Controllers should coordinate HTTP concerns, not contain large amounts of business logic. I prefer to keep request handling, validation, mapping and response generation at the API boundary while moving business logic into application or domain services.</p>
+<div class="lesson"><strong>Practical rule:</strong> if business logic cannot be tested without constructing an HTTP controller, too much responsibility probably lives in the controller.</div>
+
+<h2>3. Validate at the right layer</h2>
+<p>Request validation checks shape and basic constraints. Business validation checks domain rules. Database constraints protect integrity. These concerns should not all be mixed together.</p>
+
+<h2>4. Treat security as part of the design</h2>
+<ul><li>Use HTTPS everywhere.</li><li>Use trusted identity providers and token-based authentication.</li><li>Enforce authorization using claims or policies.</li><li>Follow least privilege.</li><li>Keep secrets outside source code using Azure Key Vault or equivalent.</li><li>Avoid logging tokens and sensitive data.</li><li>Apply rate limiting where appropriate.</li></ul>
+
+<h2>5. Design predictable error handling</h2>
+<p>I prefer centralized exception handling with a consistent response contract such as <code>ProblemDetails</code>, including a correlation or trace identifier that can be matched against application logs.</p>
+
+<h2>6. Use async for I/O-bound work</h2>
+<p>Database calls, HTTP calls, messaging and cloud-storage operations are normally I/O-bound. Using async/await correctly helps ASP.NET Core use request-processing threads efficiently. Avoid blocking calls such as <code>.Result</code> and <code>.Wait()</code> in asynchronous request paths.</p>
+
+<h2>7. Make database access intentional</h2>
+<ul><li>Filter before materializing queries.</li><li>Project only required columns.</li><li>Use <code>AsNoTracking()</code> for read-only queries.</li><li>Avoid N+1 queries.</li><li>Use pagination for large result sets.</li><li>Review execution plans and indexing when performance degrades.</li></ul>
+<p>ORMs improve productivity, but engineers still need to understand the SQL generated underneath.</p>
+
+<h2>8. Design for retries and duplicate requests</h2>
+<p>Networks fail and clients retry. In financial or transaction-heavy systems, repeated requests must not create repeated business effects. Idempotency keys, unique identifiers and idempotent message consumers are important safeguards.</p>
+
+<h2>9. Build observability into every API</h2>
+<ul><li>Structured logging</li><li>Correlation IDs</li><li>Request duration</li><li>Dependency timing</li><li>Application Insights or equivalent tracing</li><li>Health checks</li><li>Meaningful business and technical metrics</li></ul>
+<p>Observability turns debugging from guesswork into investigation.</p>
+
+<h2>10. Think beyond the happy path</h2>
+<p>Ask what happens when the database is slow, an external API returns 503, a message is delivered twice, or one step succeeds and the next fails. Timeouts, retries, circuit breakers, cancellation tokens, dead-letter handling and transactional patterns should be considered according to business risk.</p>
+
+<h2>11. Production readiness includes delivery</h2>
+<p>CI/CD, automated tests, environment configuration, secret handling, health checks, rollback strategy and production monitoring all affect whether a release is actually safe.</p>
+
+<div class="lesson"><strong>My checklist:</strong> correct contract, secure access, clean business boundaries, efficient data access, consistent errors, observability, resilience, automated testing and deployment readiness.</div>
+
+<h2>Final thoughts</h2>
+<p>ASP.NET Core provides excellent building blocks for enterprise API development. The real engineering value comes from how those building blocks are combined.</p>
+<div class="quote">Production-ready software is built by thinking about failure, maintenance and operations before production—not after the first incident.</div>
+
+<div class="author-card"><h3>About the author</h3><p><strong>Yohapriya Vairaperumal</strong> is a Technical Lead with 13+ years of experience in C#, .NET, ASP.NET Core, Azure, Web APIs, SQL Server and enterprise application development.</p></div>
+</div></article></main>
+
+<footer class="footer"><div class="container footer-wrap"><span>© <span id="year"></span> Yohapriya Vairaperumal</span><a href="../index.html">Portfolio</a></div></footer>
+<script src="../script.js"></script></body></html>
